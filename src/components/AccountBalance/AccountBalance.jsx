@@ -8,17 +8,20 @@ const Section = styled.section`
     text-align: left;
     padding-left: 5rem
 `
-// import  './Coin.css';
+
 export default class AccountBalance extends Component {
+    
+
+
     render() {
+        const buttonText = this.props.showBalance ? 'Hide Balance': 'Show Balance';
         return (
             <>
                 <Section>
-                    $ {this.props.amount}
+                    {this.props.showBalance ? "$ "+ this.props.amount : null}
+                    {/* $ {this.props.amount} */}
+                    <button onClick={this.props.toggleBalance}>{buttonText}</button>
                 </Section>
-                {/* <section className="balance-section">
-                    $ {this.props.amount}
-                </section> */}
             </>
         )
     }
