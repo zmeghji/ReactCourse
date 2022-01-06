@@ -4,21 +4,30 @@ import AccountBalance from './components/AccountBalance/AccountBalance'
 import Header from './components/Header/Header'
 
 import {v4 as uuidv4} from 'uuid'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
 
 const COIN_COUNT =10;
 const TICKER_URL = "https://api.coinpaprika.com/v1/tickers/";
-class  App extends React.Component {
-  state = 
-  {
-    showBalance: true,
-    balance : 10000,
-    coinData : []
-  }
-  
-  componentDidMount = async () =>{
+function  App (props){
+
+  const [balance, setBalance] = useState(10000)
+  const [showBalance, setShowBalance] = useState(true)
+  const [coinData, setCoinData] = useState([])
+
+
+  useEffect(async function(){
+    if(coinData.length ===0){
+      //component did mount
+      await componentDidMount();
+    }
+    else{
+      //component did update
+    }
+
+  })
+  const componentDidMount = async () =>{
     let response = await axios.get('https://api.coinpaprika.com/v1/coins');
     let coinKeys = response.data.slice(0,COIN_COUNT).map (coin => coin.id);
 
@@ -35,13 +44,12 @@ class  App extends React.Component {
         price:  parseFloat(Number( coin.quotes.USD.price).toFixed(4))
       }
     });
-    this.setState({coinData: coinPriceData});
-
+    setCoinData(coinPriceData);
   }
-  handleRefresh = async (valueChangeKey) =>{
+  const handleRefresh = async (valueChangeKey) =>{
     var response = await axios.get(TICKER_URL+ valueChangeKey);
 
-    const coinData = this.state.coinData.map( function(values){
+    const newCoinData = coinData.map( function(values){
       let newValues = {...values};
       if (valueChangeKey === newValues.key){
         let coin = response.data;
@@ -49,29 +57,27 @@ class  App extends React.Component {
       }
       return newValues;
     });
-    this.setState({coinData});
+    setCoinData(newCoinData);
   }
 
-  toggleBalance = () =>{
-    this.setState({showBalance: !this.state.showBalance});
+  const toggleBalance = () =>{
+    setShowBalance(!showBalance)
   }
-  render(){
-    return (
-      <div className="App">
-        <Header />
+  return (
+    <div className="App">
+      <Header />
 
-        <AccountBalance 
-          amount={this.state.balance} 
-          showBalance={this.state.showBalance}
-          toggleBalance={this.toggleBalance} />
+      <AccountBalance 
+        amount={balance} 
+        showBalance={showBalance}
+        toggleBalance={toggleBalance} />
 
-        <CoinList 
-          coinData={this.state.coinData} 
-          handleRefresh={this.handleRefresh}
-          showBalance={this.state.showBalance} />
-      </div>
-    );
-  }
+      <CoinList 
+        coinData={coinData} 
+        handleRefresh={handleRefresh}
+        showBalance={showBalance} />
+    </div>
+  );
   
 }
 

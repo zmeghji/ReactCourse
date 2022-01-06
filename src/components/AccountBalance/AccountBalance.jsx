@@ -9,22 +9,17 @@ const Section = styled.section`
     padding-left: 5rem
 `
 
-export default class AccountBalance extends Component {
-    
-
-
-    render() {
-        const buttonText = this.props.showBalance ? 'Hide Balance': 'Show Balance';
-        return (
-            <>
-                <Section>
-                    {this.props.showBalance ? "$ "+ this.props.amount : null}
-                    {/* $ {this.props.amount} */}
-                    <button onClick={this.props.toggleBalance}>{buttonText}</button>
-                </Section>
-            </>
-        )
-    }
+export default function AccountBalance(props){
+    const buttonText = props.showBalance ? 'Hide Balance': 'Show Balance';
+    return (
+        <>
+            <Section>
+                {props.showBalance ? "$ "+ props.amount : null}
+                {/* $ {props.amount} */}
+                <button onClick={props.toggleBalance}>{buttonText}</button>
+            </Section>
+        </>
+    )
 }
 AccountBalance.propTypes ={
     amount: PropTypes.number.isRequired,
