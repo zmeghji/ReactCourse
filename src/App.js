@@ -7,13 +7,18 @@ import {v4 as uuidv4} from 'uuid'
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
+// import 'bootstrap/dist/css/bootstrap.min.css'
+
+import 'bootswatch/dist/flatly/bootstrap.min.css'
+import '@fortawesome/fontawesome-free/js/all'
+
 
 const COIN_COUNT =10;
 const TICKER_URL = "https://api.coinpaprika.com/v1/tickers/";
 function  App (props){
 
   const [balance, setBalance] = useState(10000)
-  const [showBalance, setShowBalance] = useState(true)
+  const [showBalance, setShowBalance] = useState(false)
   const [coinData, setCoinData] = useState([])
 
 
@@ -63,6 +68,23 @@ function  App (props){
   const toggleBalance = () =>{
     setShowBalance(!showBalance)
   }
+
+  const handleBrrrr = () =>{
+    setBalance(oldBalance => oldBalance +1200);
+  }
+  const handleTransaction = (isBuy, valueChangeId) =>{
+    var balanceChange = isBuy ? 1: -1;
+    const newCoinData =coinData.map(function(coin){
+      let newCoin = {...coin};
+      if (valueChangeId == coin.key){
+        newCoin.balance += balanceChange;
+        setBalance(oldBalance => oldBalance - balanceChange * newCoin.price);
+      }
+      return newCoin;
+    })
+    setCoinData(newCoinData);
+  }
+
   return (
     <div className="App">
       <Header />
@@ -70,12 +92,15 @@ function  App (props){
       <AccountBalance 
         amount={balance} 
         showBalance={showBalance}
-        toggleBalance={toggleBalance} />
+        toggleBalance={toggleBalance}
+        handleBrrrr={handleBrrrr}
+         />
 
       <CoinList 
         coinData={coinData} 
         handleRefresh={handleRefresh}
-        showBalance={showBalance} />
+        showBalance={showBalance}
+        handleTransaction={handleTransaction} />
     </div>
   );
   
